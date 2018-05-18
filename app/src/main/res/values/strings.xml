@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Listy</string>
+    <string name="action_settings">Settings</string>
+    <string name="save">Save</string>
+    <string name="store_name_hint">Store Name</string>
+    <string name="item_names_hint">Add items to buy here!</string>
+</resources>
