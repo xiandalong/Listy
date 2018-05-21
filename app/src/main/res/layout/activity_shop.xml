@@ -5,33 +5,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StoreActivity"
     android:padding="@dimen/margin_padding_size_small"
+    tools:context=".ShopActivity"
     >
 
 
     <EditText
-        android:id="@+id/store_name"
+        android:id="@+id/shop_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size_large"
-        tools:text = "Target"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/item_names"
+        android:background="@android:color/transparent"
         android:hint="@string/store_name_hint"
         android:inputType="textMultiLine"
+        android:textSize="@dimen/text_size_large"
+        app:layout_constraintBottom_toTopOf="@id/item_names"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Target"
         />
 
     <EditText
         android:id="@+id/item_names"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/store_name"
+        android:background="@android:color/transparent"
         android:hint="@string/item_names_hint"
-        tools:text="PS4, switch, XBOX ONE X"
         android:inputType="textMultiLine"
         android:minLines="8"
-        android:background="@android:color/transparent"
+        app:layout_constraintTop_toBottomOf="@id/shop_name"
+        tools:text="PS4, switch, XBOX ONE X"
         />
 
     <Button
