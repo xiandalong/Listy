@@ -1,5 +1,6 @@
 package com.listy.listy
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +13,11 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.content_list.*
 
+const val ADD_STORE_REQUEST_CODE = 101
+
 class ListActivity : AppCompatActivity() {
+
+    private lateinit var shopListAdapter: ShopListAdapter;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,54 +25,20 @@ class ListActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         add_store.setOnClickListener {
-            startActivity(Intent(this, ShopActivity::class.java))
+            startActivityForResult(Intent(this, ShopActivity::class.java), ADD_STORE_REQUEST_CODE)
         }
 
         val shoppingList = listOf(
             Shop("Target", "stuff"),
             Shop("99", "meat & vegetables"),
-            Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables"), Shop("Target", "stuff"),
-            Shop("99", "meat & vegetables")
-            )
+            Shop("Target", "stuff")
+        )
 
-        val shoppingListAdapter = ShopListAdapter(this, shoppingList)
+        shopListAdapter = ShopListAdapter(this, shoppingList)
 
         shopping_list.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = shoppingListAdapter
+            adapter = shopListAdapter
         }
     }
 
@@ -82,9 +53,21 @@ class ListActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == ADD_STORE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                data?.apply {
+                    val shopName = this.getStringExtra(SHOP_NAME)
+                    val itemNames = this.getStringExtra(ITEM_NAMES)
+                    shopListAdapter.addShop(Shop(shopName, itemNames))
+                }
+            }
+        }
+    }
 }
 
-class ShopListAdapter(val context: Context, private var shopList: List<Shop> = listOf()) :
+class ShopListAdapter(private val context: Context, private var shopList: List<Shop> = listOf()) :
     RecyclerView.Adapter<ShoppingItemViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShoppingItemViewHolder {
@@ -100,7 +83,7 @@ class ShopListAdapter(val context: Context, private var shopList: List<Shop> = l
         val shop = shopList[position]
         holder.setItem(shop)
         holder.itemView.setOnClickListener {
-            context.startActivity(ShopActivity.newIntent(context,shop))
+            context.startActivity(ShopActivity.newIntent(context, shop))
         }
     }
 
@@ -109,12 +92,17 @@ class ShopListAdapter(val context: Context, private var shopList: List<Shop> = l
         notifyDataSetChanged()
     }
 
+    fun addShop(shop: Shop) {
+        shopList += shop
+        notifyItemInserted(shopList.size)
+    }
+
 }
 
 class ShoppingItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    var storeNameTextView: TextView? = null
-    var itemNamesTextView: TextView? = null
+    private var storeNameTextView: TextView? = null
+    private var itemNamesTextView: TextView? = null
 
     init {
         storeNameTextView = itemView.findViewById(R.id.shop_name)
